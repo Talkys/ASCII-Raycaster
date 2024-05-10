@@ -75,13 +75,14 @@ int main()
     if(has_colors())
     {
         start_color();
-        init_pair(1, COLOR_RED, COLOR_BLACK);
-        init_pair(2, COLOR_GREEN, COLOR_BLACK);
-        init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(4, COLOR_BLUE, COLOR_BLACK);
-        init_pair(5, COLOR_CYAN, COLOR_BLACK);
-        init_pair(6, COLOR_MAGENTA, COLOR_BLACK);
-        init_pair(7, COLOR_WHITE, COLOR_BLACK);
+        init_pair(1, COLOR_BLACK, COLOR_BLACK);   // BLACK
+        init_pair(2, COLOR_RED, COLOR_RED);       // RED
+        init_pair(3, COLOR_GREEN, COLOR_GREEN);   // GREEN
+        init_pair(4, COLOR_YELLOW, COLOR_YELLOW); // YELLOW
+        init_pair(5, COLOR_BLUE, COLOR_BLUE);     // BLUE
+        init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA); // MAGENTA
+        init_pair(7, COLOR_CYAN, COLOR_CYAN);     // CYAN
+        init_pair(8, COLOR_WHITE, COLOR_WHITE);   // WHITE
     }
 
     /*Modificações ANSI*/
@@ -164,6 +165,12 @@ int main()
     return 0;
 }
 
+void cast_shadow(int shade, int x, int y) {
+    attron(COLOR_PAIR(shade));
+    mvaddch(y, x, ' ');
+    attroff(COLOR_PAIR(shade));
+}
+
 void render_view(
     float distances[], string map,
     int map_width, int map_height,
@@ -186,33 +193,34 @@ void render_view(
             {
                 sky_size = (terminal_height - projection_height) * 2.f /3.f;
                 if(y <= sky_size)
-                    mvaddch(y, x, ' ');
+                    cast_shadow(1, x, y);
                 else if(y <= (sky_size + projection_height))
                 {
                     if (distances[x] <= view_distance * 1.f / 5.f)
-                        mvaddch(y, x, '@');
+
+                        cast_shadow(8, x, y);
                     else if (distances[x] <= view_distance * 2.f / 5.f)
-                        mvaddch(y, x, '&');
+                        cast_shadow(7, x, y);
                     else if (distances[x] <= view_distance * 3.f / 5.f)
-                        mvaddch(y, x, '#');
+                        cast_shadow(6, x, y);
                     else if (distances[x] <= view_distance * 4.f / 5.f)
-                        mvaddch(y, x, '*');
+                        cast_shadow(5, x, y);
                     else if (distances[x] <= view_distance * 5.f / 6.f)
-                        mvaddch(y, x, '+');
+                        cast_shadow(4, x, y);
                     else if (distances[x] <= view_distance * 11.f / 12.f)
-                        mvaddch(y, x, '=');
+                        cast_shadow(3, x, y);
                     else
-                        mvaddch(y, x, '.');
+                        cast_shadow(2, x, y);
                 }
                 else
                 {
-                    mvaddch(y, x, ' ');
+                    cast_shadow(1, x, y);
                 }
             }
             else
             {
                 projection_height = terminal_height * (retinal_distance / (view_distance + 1));
-                mvaddch(y, x, ' ');
+                cast_shadow(1, x, y);
             }
         }
     }
